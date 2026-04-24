@@ -1,0 +1,48 @@
+Metadata-Version: 2.4
+Name: byld-portfolio-api
+Version: 0.1.0
+Summary: FastAPI backend for a portfolio management system.
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.115
+Requires-Dist: uvicorn[standard]>=0.30
+Requires-Dist: sqlalchemy>=2.0
+Requires-Dist: alembic>=1.13
+Requires-Dist: pydantic>=2.7
+Requires-Dist: pydantic-settings>=2.3
+Requires-Dist: psycopg[binary]>=3.2
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: httpx>=0.27; extra == "dev"
+
+# BYLD Portfolio API
+
+## POST /v1/portfolios
+
+### Request
+```json
+{
+  "clientName": "Aarav Mehta",
+  "riskProfile": "balanced"
+}
+```
+
+### Response
+```json
+{
+  "id": "8d5a6d8d-7f0e-4f56-9f63-8b9d9e4a9d11",
+  "clientName": "Aarav Mehta",
+  "riskProfile": "balanced",
+  "cashBalance": "0.00"
+}
+```
+
+### Flow
+Router -> Service -> Repository -> PostgreSQL via SQLAlchemy 2.0, with DTOs handled by Pydantic and money stored as `Decimal` / `NUMERIC`.
+
+## Run
+
+```powershell
+python -m alembic upgrade head
+uvicorn main:app --reload
+```
