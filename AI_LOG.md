@@ -9,7 +9,7 @@ Asked AI to:
 
 * Build a FastAPI backend for a portfolio system
 * Create project structure
-* Implement POST /v1/portfolios
+* Implement REST API for all the necessary endpoints
 * Set up PostgreSQL + Alembic
 * Add tests and dependencies
 
@@ -20,6 +20,8 @@ Asked AI to:
 * Global error handling
 * Alembic setup and migration
 * Basic tests
+* POST /v1/portfolios/{portfolio_id}/balance
+* Response messages for portfolio create, balance add, buy, sell, and dividend create endpoints
 
 ## What I Kept / Changed
 
@@ -41,8 +43,8 @@ Asked AI to:
 
 ## Time Split
 
-* Coding: 30%
-* Prompting: 10%
+* Coding: 20%
+* Prompting: 30%
 * Review: 20%
 * Debugging: 20%
 * Testing: 15%
