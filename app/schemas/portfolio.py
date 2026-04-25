@@ -24,3 +24,16 @@ class PortfolioResponse(APIModel):
     client_name: str = Field(alias="clientName")
     risk_profile: RiskProfile = Field(alias="riskProfile")
     cash_balance: Decimal = Field(alias="cashBalance")
+
+
+class PortfolioSummaryResponse(APIModel):
+    id: UUID
+    client_name: str = Field(alias="clientName")
+    risk_profile: RiskProfile = Field(alias="riskProfile")
+    cash_balance: Decimal = Field(alias="cashBalance")
+    holdings: list["HoldingSummaryResponse"] = Field(default_factory=list)
+
+
+from app.schemas.holding import HoldingSummaryResponse  # noqa: E402
+
+PortfolioSummaryResponse.model_rebuild()

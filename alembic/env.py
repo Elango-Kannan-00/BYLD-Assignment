@@ -5,7 +5,10 @@ from sqlalchemy import engine_from_config, pool
 
 from app.core.config import get_settings
 from app.models.base import Base
+from app.models import dividend as _dividend  # noqa: F401
+from app.models import holding as _holding  # noqa: F401
 from app.models.portfolio import Portfolio  # noqa: F401
+from app.models import transaction as _transaction  # noqa: F401
 
 config = context.config
 

@@ -2,7 +2,9 @@ from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+from app.api.v1.routers.dividends import router as dividends_router
 from app.api.v1.routers.portfolios import router as portfolios_router
+from app.api.v1.routers.transactions import router as transactions_router
 from app.core.config import get_settings
 from app.exceptions.base import AppException
 from app.schemas.common import ErrorDetail, ErrorResponse
@@ -11,6 +13,8 @@ settings = get_settings()
 
 app = FastAPI(title=settings.app_name)
 app.include_router(portfolios_router)
+app.include_router(transactions_router)
+app.include_router(dividends_router)
 
 
 @app.exception_handler(RequestValidationError)
@@ -39,7 +43,7 @@ def http_exception_handler(_: Request, exc: HTTPException) -> JSONResponse:
 @app.exception_handler(AppException)
 def app_exception_handler(_: Request, exc: AppException) -> JSONResponse:
     return JSONResponse(
-        status_code=status.HTTP_400_BAD_REQUEST,
+        status_code=exc.status_code,
         content=ErrorResponse(
             error=exc.code,
             details=[ErrorDetail(field=item.get("field"), message=item.get("message", "")) for item in exc.details] or None,

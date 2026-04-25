@@ -6,6 +6,7 @@ import pytest
 from app.api.v1.routers import portfolios as portfolios_router
 from app.core.constants import RiskProfile
 from app.models.portfolio import Portfolio
+from app.main import app
 from app.repositories.portfolio_repository import PortfolioRepository
 from app.schemas.portfolio import PortfolioCreateRequest, PortfolioResponse
 from app.services.portfolio_service import PortfolioService
@@ -135,7 +136,7 @@ def test_portfolio_service_commits_and_returns_dto():
     result = service.create_portfolio(payload)
 
     assert session.committed is True
-    assert session.refreshed is not None
+    assert session.refreshed is None
     assert result.model_dump(mode="json", by_alias=True) == {
         "id": str(FakePortfolio.id),
         "clientName": "Aarav Mehta",

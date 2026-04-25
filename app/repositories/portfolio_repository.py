@@ -1,6 +1,5 @@
-from uuid import UUID
-
 from decimal import Decimal
+from uuid import UUID, uuid4
 
 from sqlalchemy.orm import Session
 
@@ -14,6 +13,7 @@ class PortfolioRepository:
 
     def create(self, data: PortfolioCreateRequest) -> Portfolio:
         portfolio = Portfolio(
+            id=uuid4(),
             client_name=data.client_name,
             risk_profile=data.risk_profile,
             cash_balance=Decimal("0.00"),

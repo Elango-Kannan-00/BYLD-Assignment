@@ -1,6 +1,9 @@
+from datetime import date, datetime
+from decimal import Decimal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
+
 from app.core.constants import RiskProfile
 
 
@@ -24,3 +27,15 @@ class ErrorResponse(APIModel):
 
 class UUIDResponse(APIModel):
     id: UUID
+
+
+class DateTimeResponse(APIModel):
+    created_at: datetime = Field(alias="createdAt")
+
+
+class DateResponse(APIModel):
+    record_date: date = Field(alias="recordDate")
+
+
+class DecimalResponse(APIModel):
+    value: Decimal

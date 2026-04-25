@@ -4,7 +4,7 @@ from uuid import UUID as PyUUID, uuid4
 
 from sqlalchemy import DateTime, Enum as SAEnum, Numeric, String, func
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.constants import RiskProfile
 from app.models.base import Base
@@ -27,4 +27,23 @@ class Portfolio(Base):
         server_default=func.now(),
         onupdate=func.now(),
         nullable=False,
+    )
+
+    holdings = relationship(
+        "Holding",
+        back_populates="portfolio",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+    transactions = relationship(
+        "Transaction",
+        back_populates="portfolio",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+    dividends = relationship(
+        "Dividend",
+        back_populates="portfolio",
+        cascade="all, delete-orphan",
+        lazy="selectin",
     )
