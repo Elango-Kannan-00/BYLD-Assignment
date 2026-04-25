@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.schemas.holding import HoldingSummaryResponse
-from app.schemas.portfolio import PortfolioCreateRequest, PortfolioResponse, PortfolioSummaryResponse
+from app.schemas.portfolio import BalanceAddRequest, PortfolioCreateRequest, PortfolioResponse, PortfolioSummaryResponse
 from app.services.portfolio_service import PortfolioService
 
 router = APIRouter(prefix="/v1/portfolios", tags=["portfolios"])
@@ -21,6 +21,16 @@ def create_portfolio(
     created = service.create_portfolio(payload)
     response.headers["Location"] = f"/v1/portfolios/{created.id}"
     return created
+
+
+@router.post("/{portfolio_id}/balance", response_model=PortfolioResponse, response_model_by_alias=True)
+def add_balance(
+    portfolio_id: UUID,
+    payload: BalanceAddRequest,
+    db: Session = Depends(get_db),
+) -> PortfolioResponse:
+    service = PortfolioService(db)
+    return service.add_balance(portfolio_id, payload)
 
 
 @router.get("/{portfolio_id}", response_model=PortfolioSummaryResponse, response_model_by_alias=True)

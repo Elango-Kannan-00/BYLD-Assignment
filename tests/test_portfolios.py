@@ -8,7 +8,7 @@ from app.core.constants import RiskProfile
 from app.models.portfolio import Portfolio
 from app.main import app
 from app.repositories.portfolio_repository import PortfolioRepository
-from app.schemas.portfolio import PortfolioCreateRequest, PortfolioResponse
+from app.schemas.portfolio import BalanceAddRequest, PortfolioCreateRequest, PortfolioResponse
 from app.services.portfolio_service import PortfolioService
 
 
@@ -25,6 +25,7 @@ def test_create_portfolio_returns_201_and_location_header(client, monkeypatch):
                 clientName=data.client_name,
                 riskProfile=data.risk_profile,
                 cashBalance=Decimal("0.00"),
+                message="Portfolio created",
             )
 
     monkeypatch.setattr(portfolios_router, "PortfolioService", FakeService)
@@ -42,6 +43,7 @@ def test_create_portfolio_returns_201_and_location_header(client, monkeypatch):
         "clientName": "Aarav Mehta",
         "riskProfile": "balanced",
         "cashBalance": "0.00",
+        "message": "Portfolio created",
     }
 
 
@@ -142,4 +144,76 @@ def test_portfolio_service_commits_and_returns_dto():
         "clientName": "Aarav Mehta",
         "riskProfile": "balanced",
         "cashBalance": "0.00",
+        "message": "Portfolio created",
+    }
+
+
+def test_add_balance_updates_cash_balance_and_returns_dto():
+    portfolio_id = uuid4()
+
+    class FakePortfolio:
+        id = portfolio_id
+        client_name = "Aarav Mehta"
+        risk_profile = RiskProfile.balanced
+        cash_balance = Decimal("100.00")
+
+    class FakeRepository:
+        def __init__(self, session):
+            self.session = session
+
+        def get_by_id(self, _portfolio_id):
+            return FakePortfolio()
+
+    class FakeSession:
+        def __init__(self):
+            self.committed = False
+
+        def commit(self):
+            self.committed = True
+
+    session = FakeSession()
+    service = PortfolioService(session)
+    service.repository = FakeRepository(session)
+    payload = BalanceAddRequest.model_validate({"amount": "25.00"})
+
+    result = service.add_balance(portfolio_id, payload)
+
+    assert session.committed is True
+    assert result.model_dump(mode="json", by_alias=True) == {
+        "id": str(portfolio_id),
+        "clientName": "Aarav Mehta",
+        "riskProfile": "balanced",
+        "cashBalance": "125.00",
+        "message": "Balance added",
+    }
+
+
+def test_add_balance_returns_200_and_updated_payload(client, monkeypatch):
+    portfolio_id = uuid4()
+
+    class FakeService:
+        def __init__(self, session):
+            self.session = session
+
+        def add_balance(self, _portfolio_id, data):
+            return PortfolioResponse(
+                id=portfolio_id,
+                clientName="Aarav Mehta",
+                riskProfile=RiskProfile.balanced,
+                cashBalance=Decimal("125.00"),
+                message="Balance added",
+            )
+
+    monkeypatch.setattr(portfolios_router, "PortfolioService", FakeService)
+    app.dependency_overrides.clear()
+
+    response = client.post(f"/v1/portfolios/{portfolio_id}/balance", json={"amount": "25.00"})
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "id": str(portfolio_id),
+        "clientName": "Aarav Mehta",
+        "riskProfile": "balanced",
+        "cashBalance": "125.00",
+        "message": "Balance added",
     }

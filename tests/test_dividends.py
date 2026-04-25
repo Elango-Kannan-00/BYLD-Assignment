@@ -78,4 +78,5 @@ def test_dividend_correctly_credits_cash_balance():
     assert result.quantity_held == 12
     assert result.per_share_amount == Decimal("1.50")
     assert result.payout == Decimal("18.00")
+    assert result.message == "Dividend recorded"
     assert session.committed is True

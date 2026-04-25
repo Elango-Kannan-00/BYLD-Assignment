@@ -19,11 +19,16 @@ class PortfolioCreateRequest(APIModel):
         return value
 
 
+class BalanceAddRequest(APIModel):
+    amount: Decimal = Field(gt=0)
+
+
 class PortfolioResponse(APIModel):
     id: UUID
     client_name: str = Field(alias="clientName")
     risk_profile: RiskProfile = Field(alias="riskProfile")
     cash_balance: Decimal = Field(alias="cashBalance")
+    message: str = ""
 
 
 class PortfolioSummaryResponse(APIModel):

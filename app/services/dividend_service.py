@@ -36,7 +36,16 @@ class DividendService:
         self.dividend_repository.create(dividend)
         portfolio.cash_balance = portfolio.cash_balance + payout
         self.session.commit()
-        return DividendResponse.model_validate(dividend)
+        return DividendResponse(
+            id=dividend.id,
+            portfolioId=dividend.portfolio_id,
+            symbol=dividend.symbol,
+            quantityHeld=dividend.quantity_held,
+            perShareAmount=dividend.per_share_amount,
+            payout=dividend.payout,
+            recordDate=dividend.record_date,
+            message="Dividend recorded",
+        )
 
     def list_dividends(self, portfolio_id: UUID) -> list[DividendGroupResponse]:
         portfolio = self._get_portfolio(portfolio_id)

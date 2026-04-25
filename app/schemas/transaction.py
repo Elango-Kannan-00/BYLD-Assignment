@@ -29,3 +29,4 @@ class TransactionResponse(APIModel):
     quantity: int
     price: Decimal
     total_amount: Decimal = Field(alias="totalAmount")
+    message: str = ""

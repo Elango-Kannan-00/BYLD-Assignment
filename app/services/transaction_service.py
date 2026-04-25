@@ -57,7 +57,7 @@ class TransactionService:
         )
         self.transaction_repository.create(transaction)
         self.session.commit()
-        return self._to_response(transaction)
+        return self._to_response(transaction, "Purchased the stock")
 
     def sell(self, portfolio_id: UUID, data: TransactionCreateRequest) -> TransactionResponse:
         portfolio = self._get_portfolio(portfolio_id)
@@ -80,7 +80,7 @@ class TransactionService:
         )
         self.transaction_repository.create(transaction)
         self.session.commit()
-        return self._to_response(transaction)
+        return self._to_response(transaction, "Sold the stock")
 
     def _get_portfolio(self, portfolio_id: UUID):
         portfolio = self.portfolio_repository.get_by_id(portfolio_id)
@@ -88,5 +88,14 @@ class TransactionService:
             raise PortfolioNotFoundError()
         return portfolio
 
-    def _to_response(self, transaction: Transaction) -> TransactionResponse:
-        return TransactionResponse.model_validate(transaction)
+    def _to_response(self, transaction: Transaction, message: str) -> TransactionResponse:
+        return TransactionResponse(
+            id=transaction.id,
+            portfolioId=transaction.portfolio_id,
+            symbol=transaction.symbol,
+            transactionType=transaction.transaction_type,
+            quantity=transaction.quantity,
+            price=transaction.price,
+            totalAmount=transaction.total_amount,
+            message=message,
+        )

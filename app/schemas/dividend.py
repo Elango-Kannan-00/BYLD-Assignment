@@ -29,6 +29,7 @@ class DividendResponse(APIModel):
     per_share_amount: Decimal = Field(alias="perShareAmount")
     payout: Decimal
     record_date: date = Field(alias="recordDate")
+    message: str = ""
 
 
 class DividendGroupResponse(APIModel):

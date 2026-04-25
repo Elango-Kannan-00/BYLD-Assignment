@@ -25,4 +25,5 @@ def portfolio_response() -> PortfolioResponse:
         clientName="Aarav Mehta",
         riskProfile=RiskProfile.balanced,
         cashBalance=Decimal("0.00"),
+        message="Portfolio created",
     )

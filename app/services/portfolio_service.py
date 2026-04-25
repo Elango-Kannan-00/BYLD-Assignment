@@ -6,7 +6,7 @@ from app.exceptions.portfolio import PortfolioNotFoundError
 from app.repositories.holding_repository import HoldingRepository
 from app.repositories.portfolio_repository import PortfolioRepository
 from app.schemas.holding import HoldingSummaryResponse
-from app.schemas.portfolio import PortfolioCreateRequest, PortfolioResponse, PortfolioSummaryResponse
+from app.schemas.portfolio import BalanceAddRequest, PortfolioCreateRequest, PortfolioResponse, PortfolioSummaryResponse
 
 
 class PortfolioService:
@@ -18,7 +18,28 @@ class PortfolioService:
     def create_portfolio(self, data: PortfolioCreateRequest) -> PortfolioResponse:
         portfolio = self.repository.create(data)
         self.session.commit()
-        return PortfolioResponse.model_validate(portfolio)
+        return PortfolioResponse(
+            id=portfolio.id,
+            clientName=portfolio.client_name,
+            riskProfile=portfolio.risk_profile,
+            cashBalance=portfolio.cash_balance,
+            message="Portfolio created",
+        )
+
+    def add_balance(self, portfolio_id: UUID, data: BalanceAddRequest) -> PortfolioResponse:
+        portfolio = self.repository.get_by_id(portfolio_id)
+        if portfolio is None:
+            raise PortfolioNotFoundError()
+
+        portfolio.cash_balance = portfolio.cash_balance + data.amount
+        self.session.commit()
+        return PortfolioResponse(
+            id=portfolio.id,
+            clientName=portfolio.client_name,
+            riskProfile=portfolio.risk_profile,
+            cashBalance=portfolio.cash_balance,
+            message="Balance added",
+        )
 
     def get_portfolio_summary(self, portfolio_id: UUID) -> PortfolioSummaryResponse:
         portfolio = self.repository.get_by_id(portfolio_id)
