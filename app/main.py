@@ -11,7 +11,11 @@ from app.schemas.common import ErrorDetail, ErrorResponse
 
 settings = get_settings()
 
-app = FastAPI(title=settings.app_name)
+app = FastAPI(
+    title=settings.app_name,
+    docs_url="/swagger-ui",
+    redoc_url=None,
+)
 app.include_router(portfolios_router)
 app.include_router(transactions_router)
 app.include_router(dividends_router)

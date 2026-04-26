@@ -4,6 +4,10 @@ FastAPI backend for a portfolio management system built for a wealth-tech style 
 
 The project focuses on correctness in money handling, clean separation of concerns, and a reviewer-friendly API surface that can be understood in a few minutes.
 
+Reviewer path: `docker compose up`, then open `http://localhost:8000/swagger-ui`.
+
+Deviation from the Spring Boot review constraint: this repository is FastAPI-based, so Swagger is exposed at `/swagger-ui` through FastAPI's built-in OpenAPI UI rather than a Spring Boot Swagger configuration.
+
 ## Project Overview
 
 This API lets a client create a portfolio, fund it, place buy and sell transactions, record dividends, and inspect holdings and portfolio summaries.
@@ -61,16 +65,19 @@ git clone <repo-url>
 cd BYLD-Portfolio-API
 ```
 
-### 2. Create a virtual environment
+### 2. Start with Docker
+
+```bash
+docker compose up --build
+```
+
+This starts PostgreSQL and the API, runs database migrations automatically, and serves the docs at `http://localhost:8000/swagger-ui`.
+
+### 3. Local development without Docker
 
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
-```
-
-### 3. Install dependencies
-
-```bash
 pip install -e .[dev]
 ```
 
@@ -93,7 +100,7 @@ alembic upgrade head
 ### 6. Run the app
 
 ```bash
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
 
 ## API Endpoints
@@ -106,6 +113,11 @@ uvicorn main:app --reload
 - `POST /v1/portfolios/{portfolio_id}/transactions/sell` - Sell shares and reject if quantity exceeds holdings
 - `POST /v1/portfolios/{portfolio_id}/dividends` - Record a dividend and credit cash balance
 - `GET /v1/portfolios/{portfolio_id}/dividends` - List dividends grouped by symbol
+
+## Docker Files
+
+- [`Dockerfile`](c:/Users/Elango%20Kannan/Downloads/BYLD-Portfolio%20API/Dockerfile)
+- [`docker-compose.yml`](c:/Users/Elango%20Kannan/Downloads/BYLD-Portfolio%20API/docker-compose.yml)
 
 ## Example Requests and Responses
 
