@@ -36,7 +36,7 @@ def upgrade() -> None:
         sa.Column("portfolio_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("portfolios.id", ondelete="CASCADE"), nullable=False),
         sa.Column("symbol", sa.String(length=32), nullable=False),
         sa.Column("quantity", sa.Numeric(18, 6, asdecimal=True), nullable=False, server_default=sa.text("0")),
-        sa.Column("weighted_average_cost", sa.Numeric(18, 6, asdecimal=True), nullable=False, server_default=sa.text("0")),
+        sa.Column("weighted_average_cost", sa.Numeric(19, 4, asdecimal=True), nullable=False, server_default=sa.text("0.0000")),
         sa.UniqueConstraint("portfolio_id", "symbol", name="uq_holding_portfolio_symbol"),
     )
     op.create_index(op.f("ix_holdings_portfolio_id"), "holdings", ["portfolio_id"], unique=False)
@@ -48,8 +48,8 @@ def upgrade() -> None:
         sa.Column("symbol", sa.String(length=32), nullable=False),
         sa.Column("transaction_type", transaction_type_enum, nullable=False),
         sa.Column("quantity", sa.Numeric(18, 6, asdecimal=True), nullable=False),
-        sa.Column("price", sa.Numeric(18, 6, asdecimal=True), nullable=False),
-        sa.Column("total_amount", sa.Numeric(18, 6, asdecimal=True), nullable=False),
+        sa.Column("price", sa.Numeric(19, 4, asdecimal=True), nullable=False),
+        sa.Column("total_amount", sa.Numeric(19, 4, asdecimal=True), nullable=False),
         sa.Column("transacted_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
     )
     op.create_index(op.f("ix_transactions_portfolio_id"), "transactions", ["portfolio_id"], unique=False)
@@ -61,8 +61,8 @@ def upgrade() -> None:
         sa.Column("portfolio_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("portfolios.id", ondelete="CASCADE"), nullable=False),
         sa.Column("symbol", sa.String(length=32), nullable=False),
         sa.Column("quantity_held", sa.Numeric(18, 6, asdecimal=True), nullable=False),
-        sa.Column("per_share_amount", sa.Numeric(18, 6, asdecimal=True), nullable=False),
-        sa.Column("payout", sa.Numeric(18, 6, asdecimal=True), nullable=False),
+        sa.Column("per_share_amount", sa.Numeric(19, 4, asdecimal=True), nullable=False),
+        sa.Column("payout", sa.Numeric(19, 4, asdecimal=True), nullable=False),
         sa.Column("record_date", sa.Date(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
     )

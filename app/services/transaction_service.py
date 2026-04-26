@@ -12,6 +12,7 @@ from app.repositories.holding_repository import HoldingRepository
 from app.repositories.portfolio_repository import PortfolioRepository
 from app.repositories.transaction_repository import TransactionRepository
 from app.schemas.transaction import TransactionCreateRequest, TransactionResponse
+from app.utils.money import money_mul, to_money
 
 
 class TransactionService:
@@ -27,7 +28,7 @@ class TransactionService:
 
         quantity = data.quantity
         price = data.price
-        total_amount = Decimal(quantity) * price
+        total_amount = money_mul(quantity, price)
 
         if holding is None:
             holding = Holding(
@@ -35,15 +36,14 @@ class TransactionService:
                 portfolio_id=portfolio_id,
                 symbol=data.symbol,
                 quantity=quantity,
-                weighted_average_cost=price,
+                weighted_average_cost=to_money(price),
             )
             self.session.add(holding)
         else:
             existing_quantity = holding.quantity
             new_quantity = existing_quantity + quantity
-            holding.weighted_average_cost = (
-                (Decimal(existing_quantity) * holding.weighted_average_cost) + total_amount
-            ) / Decimal(new_quantity)
+            existing_cost = money_mul(existing_quantity, holding.weighted_average_cost)
+            holding.weighted_average_cost = to_money((existing_cost + total_amount) / Decimal(new_quantity))
             holding.quantity = new_quantity
 
         transaction = Transaction(
@@ -52,7 +52,7 @@ class TransactionService:
             symbol=data.symbol,
             transaction_type=TransactionType.buy,
             quantity=quantity,
-            price=price,
+            price=to_money(price),
             total_amount=total_amount,
         )
         self.transaction_repository.create(transaction)
@@ -75,8 +75,8 @@ class TransactionService:
             symbol=data.symbol,
             transaction_type=TransactionType.sell,
             quantity=data.quantity,
-            price=data.price,
-            total_amount=Decimal(data.quantity) * data.price,
+            price=to_money(data.price),
+            total_amount=money_mul(data.quantity, data.price),
         )
         self.transaction_repository.create(transaction)
         self.session.commit()

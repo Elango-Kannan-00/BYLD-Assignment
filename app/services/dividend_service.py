@@ -10,6 +10,7 @@ from app.repositories.dividend_repository import DividendRepository
 from app.repositories.holding_repository import HoldingRepository
 from app.repositories.portfolio_repository import PortfolioRepository
 from app.schemas.dividend import DividendCreateRequest, DividendGroupResponse, DividendResponse
+from app.utils.money import money_mul, to_money
 
 
 class DividendService:
@@ -22,27 +23,27 @@ class DividendService:
     def record_dividend(self, portfolio_id: UUID, data: DividendCreateRequest) -> DividendResponse:
         portfolio = self._get_portfolio(portfolio_id)
         quantity_held = self.holding_repository.get_quantity_as_of(portfolio_id, data.symbol, data.record_date)
-        payout = Decimal(quantity_held) * data.per_share_amount
+        payout = money_mul(quantity_held, data.per_share_amount)
 
         dividend = Dividend(
             id=uuid4(),
             portfolio_id=portfolio.id,
             symbol=data.symbol,
             quantity_held=quantity_held,
-            per_share_amount=data.per_share_amount,
+            per_share_amount=to_money(data.per_share_amount),
             payout=payout,
             record_date=data.record_date,
         )
         self.dividend_repository.create(dividend)
-        portfolio.cash_balance = portfolio.cash_balance + payout
+        portfolio.cash_balance = to_money(portfolio.cash_balance + payout)
         self.session.commit()
         return DividendResponse(
             id=dividend.id,
             portfolioId=dividend.portfolio_id,
             symbol=dividend.symbol,
             quantityHeld=dividend.quantity_held,
-            perShareAmount=dividend.per_share_amount,
-            payout=dividend.payout,
+            perShareAmount=to_money(dividend.per_share_amount),
+            payout=to_money(dividend.payout),
             recordDate=dividend.record_date,
             message="Dividend recorded",
         )
@@ -52,12 +53,12 @@ class DividendService:
         _ = portfolio
         dividends = self.dividend_repository.list_by_portfolio(portfolio_id)
         grouped: dict[str, list[DividendResponse]] = defaultdict(list)
-        totals: dict[str, Decimal] = defaultdict(lambda: Decimal("0"))
+        totals: dict[str, Decimal] = defaultdict(lambda: Decimal("0.0000"))
 
         for dividend in dividends:
             response = DividendResponse.model_validate(dividend)
             grouped[dividend.symbol].append(response)
-            totals[dividend.symbol] += dividend.payout
+            totals[dividend.symbol] = to_money(totals[dividend.symbol] + dividend.payout)
 
         return [
             DividendGroupResponse(

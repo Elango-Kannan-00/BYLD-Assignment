@@ -36,7 +36,7 @@ def upgrade() -> None:
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True, nullable=False),
         sa.Column("client_name", sa.String(length=255), nullable=False),
         sa.Column("risk_profile", risk_profile_enum, nullable=False),
-        sa.Column("cash_balance", sa.Numeric(18, 2, asdecimal=True), nullable=False, server_default=sa.text("0.00")),
+        sa.Column("cash_balance", sa.Numeric(19, 4, asdecimal=True), nullable=False, server_default=sa.text("0.0000")),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
         sa.Column(
             "updated_at",

@@ -21,8 +21,8 @@ class Dividend(Base):
     )
     symbol: Mapped[str] = mapped_column(String(32), nullable=False, index=True)
     quantity_held: Mapped[int] = mapped_column(Integer, nullable=False)
-    per_share_amount: Mapped[Decimal] = mapped_column(Numeric(18, 6, asdecimal=True), nullable=False)
-    payout: Mapped[Decimal] = mapped_column(Numeric(18, 6, asdecimal=True), nullable=False)
+    per_share_amount: Mapped[Decimal] = mapped_column(Numeric(19, 4, asdecimal=True), nullable=False)
+    payout: Mapped[Decimal] = mapped_column(Numeric(19, 4, asdecimal=True), nullable=False)
     record_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 

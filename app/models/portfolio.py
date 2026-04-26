@@ -17,9 +17,9 @@ class Portfolio(Base):
     client_name: Mapped[str] = mapped_column(String(255), nullable=False)
     risk_profile: Mapped[RiskProfile] = mapped_column(SAEnum(RiskProfile, name="risk_profile"), nullable=False)
     cash_balance: Mapped[Decimal] = mapped_column(
-        Numeric(18, 2, asdecimal=True),
+        Numeric(19, 4, asdecimal=True),
         nullable=False,
-        default=Decimal("0.00"),
+        default=Decimal("0.0000"),
     )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(

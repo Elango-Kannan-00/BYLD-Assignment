@@ -6,7 +6,6 @@ import pytest
 from app.api.v1.routers import portfolios as portfolios_router
 from app.core.constants import RiskProfile
 from app.models.portfolio import Portfolio
-from app.main import app
 from app.repositories.portfolio_repository import PortfolioRepository
 from app.schemas.portfolio import BalanceAddRequest, PortfolioCreateRequest, PortfolioResponse
 from app.services.portfolio_service import PortfolioService
@@ -24,12 +23,11 @@ def test_create_portfolio_returns_201_and_location_header(client, monkeypatch):
                 id=portfolio_id,
                 clientName=data.client_name,
                 riskProfile=data.risk_profile,
-                cashBalance=Decimal("0.00"),
+                cashBalance=Decimal("0.0000"),
                 message="Portfolio created",
             )
 
     monkeypatch.setattr(portfolios_router, "PortfolioService", FakeService)
-    app.dependency_overrides.clear()
 
     response = client.post(
         "/v1/portfolios",
@@ -42,7 +40,7 @@ def test_create_portfolio_returns_201_and_location_header(client, monkeypatch):
         "id": str(portfolio_id),
         "clientName": "Aarav Mehta",
         "riskProfile": "balanced",
-        "cashBalance": "0.00",
+        "cashBalance": "0.0000",
         "message": "Portfolio created",
     }
 
@@ -98,7 +96,7 @@ def test_portfolio_repository_create_sets_zero_cash_balance():
     assert isinstance(portfolio, Portfolio)
     assert portfolio.client_name == "Aarav Mehta"
     assert portfolio.risk_profile == RiskProfile.balanced
-    assert portfolio.cash_balance == Decimal("0.00")
+    assert portfolio.cash_balance == Decimal("0.0000")
 
 
 def test_portfolio_service_commits_and_returns_dto():
@@ -106,7 +104,7 @@ def test_portfolio_service_commits_and_returns_dto():
         id = uuid4()
         client_name = "Aarav Mehta"
         risk_profile = RiskProfile.balanced
-        cash_balance = Decimal("0.00")
+        cash_balance = Decimal("0.0000")
 
     class FakeRepository:
         def __init__(self, session):
@@ -143,7 +141,7 @@ def test_portfolio_service_commits_and_returns_dto():
         "id": str(FakePortfolio.id),
         "clientName": "Aarav Mehta",
         "riskProfile": "balanced",
-        "cashBalance": "0.00",
+        "cashBalance": "0.0000",
         "message": "Portfolio created",
     }
 
@@ -155,7 +153,7 @@ def test_add_balance_updates_cash_balance_and_returns_dto():
         id = portfolio_id
         client_name = "Aarav Mehta"
         risk_profile = RiskProfile.balanced
-        cash_balance = Decimal("100.00")
+        cash_balance = Decimal("100.0000")
 
     class FakeRepository:
         def __init__(self, session):
@@ -183,7 +181,7 @@ def test_add_balance_updates_cash_balance_and_returns_dto():
         "id": str(portfolio_id),
         "clientName": "Aarav Mehta",
         "riskProfile": "balanced",
-        "cashBalance": "125.00",
+        "cashBalance": "125.0000",
         "message": "Balance added",
     }
 
@@ -200,12 +198,11 @@ def test_add_balance_returns_200_and_updated_payload(client, monkeypatch):
                 id=portfolio_id,
                 clientName="Aarav Mehta",
                 riskProfile=RiskProfile.balanced,
-                cashBalance=Decimal("125.00"),
+                cashBalance=Decimal("125.0000"),
                 message="Balance added",
             )
 
     monkeypatch.setattr(portfolios_router, "PortfolioService", FakeService)
-    app.dependency_overrides.clear()
 
     response = client.post(f"/v1/portfolios/{portfolio_id}/balance", json={"amount": "25.00"})
 
@@ -214,6 +211,6 @@ def test_add_balance_returns_200_and_updated_payload(client, monkeypatch):
         "id": str(portfolio_id),
         "clientName": "Aarav Mehta",
         "riskProfile": "balanced",
-        "cashBalance": "125.00",
+        "cashBalance": "125.0000",
         "message": "Balance added",
     }

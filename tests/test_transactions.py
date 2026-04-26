@@ -47,7 +47,7 @@ def test_buy_updates_weighted_average_correctly():
         id = portfolio_id
         client_name = "Aarav Mehta"
         risk_profile = RiskProfile.balanced
-        cash_balance = Decimal("0.00")
+        cash_balance = Decimal("0.0000")
 
     class FakePortfolioRepository:
         def __init__(self, session):
@@ -75,7 +75,7 @@ def test_buy_updates_weighted_average_correctly():
     result = service.buy(portfolio_id, payload)
 
     assert holding.quantity == 15
-    assert holding.weighted_average_cost == Decimal("106.6666666666666666666666667")
+    assert holding.weighted_average_cost == Decimal("106.6667")
     assert session.committed is True
     assert result.symbol == "AAPL"
     assert result.transaction_type == "buy"

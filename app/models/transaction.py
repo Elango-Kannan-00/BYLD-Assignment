@@ -26,8 +26,8 @@ class Transaction(Base):
         nullable=False,
     )
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
-    price: Mapped[Decimal] = mapped_column(Numeric(18, 6, asdecimal=True), nullable=False)
-    total_amount: Mapped[Decimal] = mapped_column(Numeric(18, 6, asdecimal=True), nullable=False)
+    price: Mapped[Decimal] = mapped_column(Numeric(19, 4, asdecimal=True), nullable=False)
+    total_amount: Mapped[Decimal] = mapped_column(Numeric(19, 4, asdecimal=True), nullable=False)
     transacted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     portfolio = relationship("Portfolio", back_populates="transactions")

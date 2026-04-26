@@ -15,7 +15,7 @@ class HoldingSummaryResponse(APIModel):
 class HoldingUpsertRequest(APIModel):
     symbol: str
     quantity: int = Field(gt=0)
-    price: Decimal
+    price: Decimal = Field(gt=0)
 
     @field_validator("symbol")
     @classmethod

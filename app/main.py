@@ -6,16 +6,19 @@ from app.api.v1.routers.dividends import router as dividends_router
 from app.api.v1.routers.portfolios import router as portfolios_router
 from app.api.v1.routers.transactions import router as transactions_router
 from app.core.config import get_settings
+from app.core.logging import RequestIdMiddleware, configure_logging
 from app.exceptions.base import AppException
 from app.schemas.common import ErrorDetail, ErrorResponse
 
 settings = get_settings()
+configure_logging()
 
 app = FastAPI(
     title=settings.app_name,
     docs_url="/swagger-ui",
     redoc_url=None,
 )
+app.add_middleware(RequestIdMiddleware)
 app.include_router(portfolios_router)
 app.include_router(transactions_router)
 app.include_router(dividends_router)
@@ -31,7 +34,7 @@ def validation_exception_handler(_: Request, exc: RequestValidationError) -> JSO
         for item in exc.errors()
     ]
     return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         content=ErrorResponse(error="validation_error", details=details).model_dump(mode="json"),
     )
 

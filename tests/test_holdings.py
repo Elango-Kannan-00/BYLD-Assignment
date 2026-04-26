@@ -24,7 +24,7 @@ def test_portfolio_service_returns_holdings_summary():
         id = portfolio_id
         client_name = "Aarav Mehta"
         risk_profile = RiskProfile.balanced
-        cash_balance = Decimal("0.00")
+        cash_balance = Decimal("0.0000")
 
     class FakePortfolioRepository:
         def __init__(self, session):

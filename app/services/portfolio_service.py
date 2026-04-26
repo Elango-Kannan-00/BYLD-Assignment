@@ -7,6 +7,7 @@ from app.repositories.holding_repository import HoldingRepository
 from app.repositories.portfolio_repository import PortfolioRepository
 from app.schemas.holding import HoldingSummaryResponse
 from app.schemas.portfolio import BalanceAddRequest, PortfolioCreateRequest, PortfolioResponse, PortfolioSummaryResponse
+from app.utils.money import to_money
 
 
 class PortfolioService:
@@ -22,7 +23,7 @@ class PortfolioService:
             id=portfolio.id,
             clientName=portfolio.client_name,
             riskProfile=portfolio.risk_profile,
-            cashBalance=portfolio.cash_balance,
+            cashBalance=to_money(portfolio.cash_balance),
             message="Portfolio created",
         )
 
@@ -31,13 +32,13 @@ class PortfolioService:
         if portfolio is None:
             raise PortfolioNotFoundError()
 
-        portfolio.cash_balance = portfolio.cash_balance + data.amount
+        portfolio.cash_balance = to_money(portfolio.cash_balance + data.amount)
         self.session.commit()
         return PortfolioResponse(
             id=portfolio.id,
             clientName=portfolio.client_name,
             riskProfile=portfolio.risk_profile,
-            cashBalance=portfolio.cash_balance,
+            cashBalance=to_money(portfolio.cash_balance),
             message="Balance added",
         )
 
@@ -56,7 +57,7 @@ class PortfolioService:
                 HoldingSummaryResponse(
                     symbol=holding.symbol,
                     quantity=holding.quantity,
-                    weightedAverageCostBasis=holding.weighted_average_cost,
+                    weightedAverageCostBasis=to_money(holding.weighted_average_cost),
                 )
                 for holding in holdings
             ],
@@ -72,7 +73,7 @@ class PortfolioService:
             HoldingSummaryResponse(
                 symbol=holding.symbol,
                 quantity=holding.quantity,
-                weightedAverageCostBasis=holding.weighted_average_cost,
+                weightedAverageCostBasis=to_money(holding.weighted_average_cost),
             )
             for holding in holdings
         ]

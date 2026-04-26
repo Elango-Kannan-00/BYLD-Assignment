@@ -22,9 +22,9 @@ class Holding(Base):
     symbol: Mapped[str] = mapped_column(String(32), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     weighted_average_cost: Mapped[Decimal] = mapped_column(
-        Numeric(18, 6, asdecimal=True),
+        Numeric(19, 4, asdecimal=True),
         nullable=False,
-        default=Decimal("0"),
+        default=Decimal("0.0000"),
     )
 
     portfolio = relationship("Portfolio", back_populates="holdings")

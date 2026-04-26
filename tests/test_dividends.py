@@ -33,7 +33,7 @@ def test_dividend_correctly_credits_cash_balance():
         id = portfolio_id
         client_name = "Aarav Mehta"
         risk_profile = RiskProfile.balanced
-        cash_balance = Decimal("100.00")
+        cash_balance = Decimal("100.0000")
 
     class FakePortfolioRepository:
         def __init__(self, session):
@@ -73,10 +73,10 @@ def test_dividend_correctly_credits_cash_balance():
 
     result = service.record_dividend(portfolio_id, payload)
 
-    assert service.portfolio_repository.portfolio.cash_balance == Decimal("118.00")
+    assert service.portfolio_repository.portfolio.cash_balance == Decimal("118.0000")
     assert result.symbol == "AAPL"
     assert result.quantity_held == 12
     assert result.per_share_amount == Decimal("1.50")
-    assert result.payout == Decimal("18.00")
+    assert result.payout == Decimal("18.0000")
     assert result.message == "Dividend recorded"
     assert session.committed is True
