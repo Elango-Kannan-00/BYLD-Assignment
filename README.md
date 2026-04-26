@@ -202,15 +202,6 @@ curl -X POST http://127.0.0.1:8000/v1/portfolios/0c0ef6f8-0d0b-4e1b-9eab-9f2d3f1
 - No async job queue for dividend processing
 - No explicit transaction-history endpoint beyond the buy/sell operations
 
-## What I Would Do With 2 More Days
-
-- Add authentication and portfolio ownership checks
-- Add pagination, filtering, and sort options for holdings and dividends
-- Add Docker and a one-command local bootstrap
-- Add CI with linting, formatting, and test coverage reporting
-- Add integration tests against a real PostgreSQL instance
-- Add richer portfolio analytics such as realized gain/loss and allocation breakdowns
-
 ## AI Usage
 
 AI was used during development. The prompt history and AI contribution notes are documented in [`AI_LOG.md`](c:/Users/Elango Kannan/Downloads/BYLD-Portfolio API/AI_LOG.md).
